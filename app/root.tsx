@@ -4,15 +4,17 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
 } from "remix";
 import type { MetaFunction } from "remix";
+import { ChakraProvider } from "@chakra-ui/provider";
+import React from "react";
 
 export const meta: MetaFunction = () => {
-  return { title: "New Remix App" };
+  return { title: "Bracketology" };
 };
 
-export default function App() {
+const Document: React.FC = ({ children }) => {
   return (
     <html lang="en">
       <head>
@@ -22,11 +24,21 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        {children}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
+  );
+};
+
+export default function App() {
+  return (
+    <Document>
+      <ChakraProvider>
+        <Outlet />
+      </ChakraProvider>
+    </Document>
   );
 }
