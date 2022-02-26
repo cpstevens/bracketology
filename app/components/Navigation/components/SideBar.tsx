@@ -5,7 +5,11 @@ import { Link } from 'remix';
 import { routes } from '~/components/Navigation/routes';
 import { NavRow } from './NavRow';
 
-export const SideBar: React.FC = () => {
+interface SideBarProps {
+  onNavigation: () => void;
+}
+
+export const SideBar: React.FC<SideBarProps> = ({ onNavigation }) => {
   return (
     <Stack
       spacing="8"
@@ -13,14 +17,16 @@ export const SideBar: React.FC = () => {
       height="100%"
       padding="8"
     >
-      <Link to="/">
+      <Link onClick={onNavigation} to="/">
         <Heading size="xl">Bracketology</Heading>
       </Link>
       {routes.map((route, index) => {
         if (!route.displayInNav) {
           return null;
         }
-        return <NavRow key={`route-${index}`} route={route} />;
+        return (
+          <NavRow onClick={onNavigation} key={`route-${index}`} route={route} />
+        );
       })}
     </Stack>
   );

@@ -4,12 +4,12 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-} from "@chakra-ui/react";
-import React from "react";
+} from '@chakra-ui/react';
+import React from 'react';
 
-import { useDisclosure } from "~/hooks/useDisclosure";
-import { AppHeader } from "./components/AppHeader";
-import { SideBar } from "./components/SideBar";
+import { useDisclosure } from '~/hooks/useDisclosure';
+import { AppHeader } from './components/AppHeader';
+import { SideBar } from './components/SideBar';
 
 export const Navigation: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,7 +21,7 @@ export const Navigation: React.FC = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <SideBar />
+          <SideBar onNavigation={onClose} />
         </DrawerContent>
       </Drawer>
     </>
