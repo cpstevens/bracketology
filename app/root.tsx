@@ -6,9 +6,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "remix";
+import React, { useState } from "react";
 import type { MetaFunction } from "remix";
 import { ChakraProvider } from "@chakra-ui/provider";
-import React from "react";
+
+import { theme } from "./styles/theme";
+import { Navigation } from "~/components/Navigation";
 
 export const meta: MetaFunction = () => {
   return { title: "Bracketology" };
@@ -34,9 +37,16 @@ const Document: React.FC = ({ children }) => {
 };
 
 export default function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const handleToggleSidebarClick = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <Document>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
+        <Navigation />
         <Outlet />
       </ChakraProvider>
     </Document>
