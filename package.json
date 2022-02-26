@@ -7,7 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production remix build",
     "deploy": "fly deploy --remote-only",
-    "dev": "cross-env NODE_ENV=development remix dev",
+    "dev": "dotenv cross-env NODE_ENV=development remix dev",
     "postinstall": "remix setup node",
     "start": "cross-env NODE_ENV=production remix-serve build"
   },
@@ -20,6 +20,7 @@
     "@fortawesome/react-fontawesome": "^0.1.17",
     "@remix-run/react": "^1.2.2",
     "@remix-run/serve": "^1.2.2",
+    "@supabase/supabase-js": "^1.30.7",
     "cross-env": "^7.0.3",
     "framer-motion": "^6.2.7",
     "react": "^17.0.2",
@@ -32,6 +33,7 @@
     "@types/prettier": "^2.4.4",
     "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
+    "dotenv": "^16.0.0",
     "prettier": "^2.5.1",
     "typescript": "^4.5.5"
   },
