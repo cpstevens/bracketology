@@ -6,7 +6,7 @@ import { FaPencilAlt } from 'react-icons/fa';
 export const meta: MetaFunction = () => {
   return {
     title: 'Bracketology - Brackets',
-    description: 'Bracketology brackets pages',
+    description: 'Bracketology brackets',
   };
 };
 
