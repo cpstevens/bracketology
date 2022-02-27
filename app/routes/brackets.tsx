@@ -16,9 +16,11 @@ const BracketsRoute = () => {
       <Flex>
         <Outlet />
         <Spacer />
-        <Button leftIcon={<FaPencilAlt />} colorScheme="blackAlpha">
-          <Link to="/brackets/create">Create Bracket</Link>
-        </Button>
+        <Link to="/brackets/create">
+          <Button leftIcon={<FaPencilAlt />} colorScheme="blackAlpha">
+            Create Bracket
+          </Button>
+        </Link>
       </Flex>
     </PageWrapper>
   );

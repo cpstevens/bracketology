@@ -5,16 +5,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "remix";
-import React, { useState } from "react";
-import type { MetaFunction } from "remix";
-import { ChakraProvider } from "@chakra-ui/provider";
+} from 'remix';
+import React, { useState } from 'react';
+import type { MetaFunction } from 'remix';
+import { ChakraProvider } from '@chakra-ui/provider';
 
-import { theme } from "./styles/theme";
-import { Navigation } from "~/components/Navigation";
+import { theme } from './styles/theme';
+import { Navigation } from '~/components/Navigation';
 
 export const meta: MetaFunction = () => {
-  return { title: "Bracketology" };
+  return { title: 'Bracketology' };
 };
 
 const Document: React.FC = ({ children }) => {

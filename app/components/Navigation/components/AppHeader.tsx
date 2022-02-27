@@ -30,13 +30,15 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onSidebarOpenClick }) => {
         mr="4"
         icon={<FaList />}
       />
-      <Heading size="xl">
-        <Link to="/">Bracketology</Link>
-      </Heading>
+      <Link to="/">
+        <Heading size="xl">Bracketology</Heading>
+      </Link>
       <Spacer />
-      <Button colorScheme="blackAlpha" variant="solid">
-        Login | Sign Up
-      </Button>
+      <Link to="/login">
+        <Button colorScheme="blackAlpha" variant="solid">
+          Login | Sign Up
+        </Button>
+      </Link>
     </Flex>
   );
 };
