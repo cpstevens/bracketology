@@ -10,3 +10,8 @@ export type LoginRequest = {
   email?: string;
   password: string;
 };
+
+export type UserContextType = {
+  isLoggedIn: boolean;
+  username: string;
+};

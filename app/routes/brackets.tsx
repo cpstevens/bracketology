@@ -1,5 +1,5 @@
-import { Outlet, Link, MetaFunction } from 'remix';
-import { Heading, Flex, Spacer, Button } from '@chakra-ui/react';
+import { Outlet, Link, MetaFunction, useLoaderData } from 'remix';
+import { Flex, Spacer, Button } from '@chakra-ui/react';
 import { PageWrapper } from '~/Layouts/PageWrapper';
 import { FaPencilAlt } from 'react-icons/fa';
 

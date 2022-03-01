@@ -11,12 +11,24 @@ import { useDisclosure } from '~/hooks/useDisclosure';
 import { AppHeader } from './components/AppHeader';
 import { SideBar } from './components/SideBar';
 
-export const Navigation: React.FC = () => {
+interface NavigationProps {
+  username?: string;
+  isLoggedIn: boolean;
+}
+
+export const Navigation: React.FC<NavigationProps> = ({
+  username,
+  isLoggedIn,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <AppHeader onSidebarOpenClick={onOpen} />
+      <AppHeader
+        username={username}
+        isLoggedIn={isLoggedIn}
+        onSidebarOpenClick={onOpen}
+      />
       <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>

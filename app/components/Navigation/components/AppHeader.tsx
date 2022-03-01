@@ -1,20 +1,26 @@
-import { RefObject, useState } from 'react';
 import { Link } from 'remix';
 import {
   Flex,
   Heading,
   Button,
   IconButton,
-  ListIcon,
   Spacer,
+  HStack,
+  Text,
 } from '@chakra-ui/react';
 import { FaList } from 'react-icons/fa';
 
 interface AppHeaderProps {
   onSidebarOpenClick: () => void;
+  isLoggedIn: boolean;
+  username?: string;
 }
 
-export const AppHeader: React.FC<AppHeaderProps> = ({ onSidebarOpenClick }) => {
+export const AppHeader: React.FC<AppHeaderProps> = ({
+  isLoggedIn,
+  username,
+  onSidebarOpenClick,
+}) => {
   return (
     <Flex
       backgroundColor="InfoBackground"
@@ -34,11 +40,21 @@ export const AppHeader: React.FC<AppHeaderProps> = ({ onSidebarOpenClick }) => {
         <Heading size="xl">Bracketology</Heading>
       </Link>
       <Spacer />
-      <Link to="/login">
-        <Button colorScheme="blackAlpha" variant="solid">
-          Login | Sign Up
-        </Button>
-      </Link>
+
+      {isLoggedIn ? (
+        <HStack spacing="2">
+          {username && <Text>{username}</Text>}
+          <Link to="/logout">
+            <Button>Sign Out</Button>
+          </Link>
+        </HStack>
+      ) : (
+        <Link to="/login">
+          <Button colorScheme="blackAlpha" variant="solid">
+            Login | Sign Up
+          </Button>
+        </Link>
+      )}
     </Flex>
   );
 };

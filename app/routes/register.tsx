@@ -15,6 +15,11 @@ import {
   VStack,
   Text,
   Box,
+  Center,
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  AlertIcon,
 } from '@chakra-ui/react';
 
 import { PageWrapper } from '~/Layouts/PageWrapper';
@@ -23,7 +28,9 @@ import { supabaseClient } from '~/database/util/supabaseClient.server';
 
 type RegisterActionData = {
   values: SignUpRequest;
-  errors: Record<keyof SignUpRequest, string>;
+  validationErrors: Record<keyof SignUpRequest, string>;
+  hasErrors: boolean;
+  registrationError?: string;
 };
 
 export const meta: MetaFunction = () => {
@@ -33,23 +40,47 @@ export const meta: MetaFunction = () => {
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const body = await request.formData();
-  const { username, email, password, passwordConfirmation } =
-    Object.fromEntries(body) as SignUpRequest;
+const validateRequiredFields = (fields: SignUpRequest): RegisterActionData => {
+  const { username, email, password, passwordConfirmation } = fields;
+  const returnData: RegisterActionData = {
+    values: { ...fields },
+    hasErrors: false,
+    validationErrors: {} as Record<keyof SignUpRequest, string>,
+  };
+
+  if (!username) {
+    returnData.validationErrors['username'] = 'Username Required';
+    returnData.hasErrors = true;
+  }
+
+  if (!email) {
+    returnData.validationErrors['email'] = 'Email Required';
+    returnData.hasErrors = true;
+  }
+
+  if (!passwordConfirmation) {
+    returnData.validationErrors['passwordConfirmation'] =
+      'Password Confirmation Required';
+    returnData.hasErrors = true;
+  }
 
   if (password !== passwordConfirmation) {
-    return {
-      errors: {
-        passwordConfirmation: 'Passwords must match',
-      },
-      values: {
-        username,
-        email,
-        password,
-        passwordConfirmation,
-      },
-    };
+    returnData.validationErrors['passwordConfirmation'] =
+      'Passwords Must Match';
+    returnData.hasErrors = true;
+  }
+
+  return returnData;
+};
+
+export const action: ActionFunction = async ({ request }) => {
+  const body = await request.formData();
+  const values = Object.fromEntries(body) as SignUpRequest;
+
+  const { username, email, password, passwordConfirmation } = values;
+  const actionData = validateRequiredFields(values);
+  if (actionData.hasErrors) {
+    return actionData;
   }
 
   try {
@@ -65,21 +96,32 @@ export const action: ActionFunction = async ({ request }) => {
       }
     );
 
-    const useSession = supabaseClient.auth.session();
+    if (error) {
+      actionData.registrationError = error?.message;
+      actionData.hasErrors = true;
+    }
   } catch (error) {
     console.error('Error registering user', error);
   }
-  return null;
+  return actionData;
 };
 
 const RegisterRoute = () => {
   const transition = useTransition();
   const actionData = useActionData<RegisterActionData>();
+  const hasRegistrationError = !!actionData?.registrationError;
 
   return (
     <PageWrapper>
       <VStack>
         <Heading as="h1">Register</Heading>
+        {hasRegistrationError && (
+          <Alert width="100%" variant="left-accent" status="error">
+            <AlertIcon />
+            <AlertTitle>There was an error registering your Account</AlertTitle>
+            <AlertDescription>{actionData?.registrationError}</AlertDescription>
+          </Alert>
+        )}
         <Form method="post">
           <fieldset disabled={transition.state === 'submitting'}>
             <FormLabel>
@@ -115,13 +157,12 @@ const RegisterRoute = () => {
             <FormLabel>
               <Box>
                 Confirm Password
-                {actionData?.errors.passwordConfirmation && (
+                {actionData?.validationErrors?.passwordConfirmation && (
                   <Text color="red.400">
-                    {actionData?.errors.passwordConfirmation}
+                    {actionData?.validationErrors?.passwordConfirmation}
                   </Text>
                 )}
               </Box>
-
               <Input
                 type="password"
                 name="passwordConfirmation"
