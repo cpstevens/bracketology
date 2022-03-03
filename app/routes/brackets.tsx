@@ -1,7 +1,6 @@
-import { Outlet, Link, MetaFunction, useLoaderData } from 'remix';
-import { Flex, Spacer, Button } from '@chakra-ui/react';
+import { Outlet, MetaFunction } from 'remix';
+
 import { PageWrapper } from '~/Layouts/PageWrapper';
-import { FaPencilAlt } from 'react-icons/fa';
 
 export const meta: MetaFunction = () => {
   return {
@@ -13,15 +12,7 @@ export const meta: MetaFunction = () => {
 const BracketsRoute = () => {
   return (
     <PageWrapper>
-      <Flex>
-        <Outlet />
-        <Spacer />
-        <Link to="/brackets/create">
-          <Button leftIcon={<FaPencilAlt />} colorScheme="blackAlpha">
-            Create Bracket
-          </Button>
-        </Link>
-      </Flex>
+      <Outlet />
     </PageWrapper>
   );
 };
