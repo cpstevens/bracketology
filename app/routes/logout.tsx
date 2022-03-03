@@ -2,7 +2,7 @@ import React from 'react';
 import { ActionFunction, Form, Link, redirect } from 'remix';
 import { Button, Heading, HStack, VStack } from '@chakra-ui/react';
 
-import { getSession, destroySession } from '~/sessions';
+import { getSession, destroySession } from '~/sessions.server';
 
 export const action: ActionFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('Cookie'));

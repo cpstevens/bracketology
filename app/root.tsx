@@ -12,14 +12,14 @@ import { ChakraProvider } from '@chakra-ui/provider';
 
 import { theme } from './styles/theme';
 import { Navigation } from '~/components/Navigation';
-import { getSession } from '~/sessions';
+import { getSession } from '~/sessions.server';
 import { UserContextType } from './types/auth';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('Cookie'));
   const username = session.get('username');
-  console.log(username);
   const isLoggedIn = session.has('accessToken');
+
   const data: UserContextType = {
     username: username,
     isLoggedIn,

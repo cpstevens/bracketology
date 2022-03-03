@@ -23,7 +23,7 @@ import {
 import { PageWrapper } from '~/Layouts/PageWrapper';
 import { LoginRequest } from '~/types/auth';
 import { supabaseClient } from '~/database/util/supabaseClient.server';
-import { getSession, commitSession } from '~/sessions';
+import { getSession, commitSession } from '~/sessions.server';
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get('Cookie'));
