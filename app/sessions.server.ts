@@ -1,5 +1,5 @@
 // app/sessions.js
-import { createCookieSessionStorage } from 'remix';
+import { createCookieSessionStorage, Session } from 'remix';
 
 const { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
@@ -18,4 +18,6 @@ const { getSession, commitSession, destroySession } =
     },
   });
 
-export { getSession, commitSession, destroySession };
+const isSessionValid = (session?: Session) => session?.has('userId');
+
+export { getSession, commitSession, destroySession, isSessionValid };
