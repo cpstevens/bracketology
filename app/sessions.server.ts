@@ -10,7 +10,7 @@ const { getSession, commitSession, destroySession } =
       // all of these are optional
       expires: new Date(Date.now() + 60_000),
       httpOnly: true,
-      maxAge: 60,
+      maxAge: 600,
       path: '/',
       sameSite: 'lax',
       secrets: ['s3cret1'],
