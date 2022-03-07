@@ -1,6 +1,12 @@
 export type ValidationResult<T extends {}> = {
   values: T;
-  errors: Record<keyof T, string>;
+  hasErrors: boolean;
+  errors: Record<keyof T, string | undefined>;
+};
+
+export type FieldValidationFunction<T> = (input: string | undefined) => {
+  value: T;
+  error: string | undefined;
 };
 
 export type ValidationFunction<T extends {}> = (
