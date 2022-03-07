@@ -5,17 +5,15 @@ import {
   Flex,
   Heading,
   Spacer,
-  Table,
-  Tbody,
   Text,
-  Th,
-  Thead,
-  Tr,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { FaPencilAlt } from 'react-icons/fa';
 
 import { supabaseClient } from '~/database/util/supabaseClient.server';
 import { BracketSummary } from '~/types/brackets';
+import { SummaryCard } from '~/components/SummaryCard';
 
 type LoaderData = {
   brackets: BracketSummary[];
@@ -80,34 +78,21 @@ const BracketsIndexRoute = () => {
         </Link>
       </Flex>
 
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Id</Th>
-            <Th>Name</Th>
-            <Th>Description</Th>
-            <Th>Category</Th>
-            <Th>Status</Th>
-            <Th>Author Id</Th>
-            <Th>Created At</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {brackets.map((bracket) => {
-            return (
-              <Tr key={bracket.id}>
-                <Th>{bracket.id}</Th>
-                <Th>{bracket.name}</Th>
-                <Th>{bracket.description}</Th>
-                <Th>{bracket.category}</Th>
-                <Th>{bracket.status}</Th>
-                <Th>{bracket.authorId}</Th>
-                <Th>{bracket.createdAt}</Th>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
+      <Wrap>
+        {brackets.map(({ id, name, authorId, description, category }) => {
+          return (
+            <WrapItem key={id}>
+              <SummaryCard
+                id={id}
+                name={name}
+                author={authorId}
+                category={category}
+                description={description}
+              />
+            </WrapItem>
+          );
+        })}
+      </Wrap>
     </>
   );
 };
