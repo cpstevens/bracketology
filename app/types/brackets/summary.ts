@@ -1,3 +1,5 @@
+import { BracketEntry } from './entry';
+
 export type BracketStatus = {
   id: number;
   name: string;
@@ -27,4 +29,9 @@ export type BracketSummary = {
   authorId: string;
   category: string;
   createdAt: string;
+};
+
+export type Bracket = {
+  summary: BracketSummary;
+  entries: BracketEntry[];
 };

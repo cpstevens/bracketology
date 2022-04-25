@@ -10,15 +10,12 @@ import {
   Tr,
 } from '@chakra-ui/react';
 
-import { supabaseClient } from '~/database/util/supabaseClient.server';
 import { PageWrapper } from '~/Layouts/PageWrapper';
-import { BracketEntry, BracketSummary } from '~/types/brackets';
+import { Bracket } from '~/types/brackets';
 import { CategoryBadge } from '~/components/CategoryBadge';
+import { getBracketDetails } from '~/database/queries/brackets.server';
 
-type LoaderData = {
-  summary: BracketSummary;
-  entries: BracketEntry[];
-};
+type LoaderData = Bracket;
 
 export const meta: MetaFunction = () => {
   return {
@@ -36,36 +33,19 @@ export const loader: LoaderFunction = async ({ params }) => {
     });
   }
 
-  const { data: bracketSummary, error: summaryError } = await supabaseClient
-    .from('summaries')
-    .select(
-      `
-    id,
-    name,
-    description,
-    author_id,
-    created_at,
-    category: category ( name ),
-    status: status (name)
-  `
-    )
-    .eq('id', params.bracketId);
-
-  const { data: entryData, error: entryError } = await supabaseClient
-    .from('entries')
-    .select(
-      `
-    id,
-    name,
-    bracket_id,
-    bracket_entry_id
-  `
-    )
-    .eq('bracket_id', bracketId);
+  const { bracketSummary, summaryError, entryData, entryError } =
+    await getBracketDetails(bracketId);
 
   if (summaryError) {
     console.error(summaryError);
     throw new Response(`Error fetching summary for bracket ${bracketId}`, {
+      status: 500,
+    });
+  }
+
+  if (entryError) {
+    console.error(entryError);
+    throw new Response(`Error fetching entries for bracket ${bracketId}`, {
       status: 500,
     });
   }
@@ -85,7 +65,6 @@ export const loader: LoaderFunction = async ({ params }) => {
           return {
             entryId: entry.id,
             entryName: entry.name,
-            bracketEntryId: entry.bracket_entry_id,
             bracketId: entry.bracket_id,
           };
         })
@@ -113,11 +92,10 @@ const BracketDetailsRoute: React.FC = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {entries.map(({ entryId, entryName, bracketEntryId, bracketId }) => (
-            <Tr key={`entry-${bracketEntryId}`}>
+          {entries.map(({ entryId, entryName, bracketId }) => (
+            <Tr key={`entry-${entryId}`}>
               <Td>{entryId}</Td>
               <Td>{entryName}</Td>
-              <Td>{bracketEntryId}</Td>
               <Td>{bracketId}</Td>
             </Tr>
           ))}

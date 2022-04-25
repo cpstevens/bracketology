@@ -43,7 +43,6 @@ export const validateBracketEntries: ValidationFunction<BracketEntryDetails> = (
 
     const entryData: BracketEntryUploadData = {
       entryName: entryValue,
-      bracketEntryId: i,
     };
 
     values.entries.push(entryData);

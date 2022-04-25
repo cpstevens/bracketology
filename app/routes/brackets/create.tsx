@@ -125,7 +125,6 @@ export const action: ActionFunction = async ({ request }) => {
   const entryInsertData = entryValues.entries.map((entry) => {
     return {
       name: entry.entryName,
-      bracket_entry_id: entry.bracketEntryId,
       bracket_id: summaryData![0].id,
     };
   });
