@@ -44,6 +44,7 @@ import {
   BracketEntryErrors,
   validateBracketEntries,
 } from '~/validation/brackets/entries.server';
+import { createBracket } from '~/database/commands/createBracket.server';
 
 type ActionData = {
   errors: {
@@ -112,32 +113,10 @@ export const action: ActionFunction = async ({ request }) => {
     author_id: userId,
   };
 
-  const { data: summaryData, error: summaryError } = await supabaseClient
-    .from('summaries')
-    .insert([summaryInsertData]);
-
-  if (summaryError) {
-    throw new Response('Error Creating bracket', {
-      status: 500,
-    });
-  }
-
-  const entryInsertData = entryValues.entries.map((entry) => {
-    return {
-      name: entry.entryName,
-      bracket_id: summaryData![0].id,
-    };
-  });
-
-  const { data: entryData, error: entryError } = await supabaseClient
-    .from('entries')
-    .insert(entryInsertData);
-
-  if (entryError) {
-    throw new Response('Error Creating Bracket Entries', {
-      status: 500,
-    });
-  }
+  const { summaryData, entryData } = await createBracket(
+    summaryInsertData,
+    entryValues
+  );
 
   return redirect('/brackets', {
     headers: {

@@ -1,5 +1,6 @@
-import { LoaderFunction, MetaFunction, useLoaderData } from 'remix';
+import { Link, LoaderFunction, MetaFunction, useLoaderData } from 'remix';
 import {
+  Button,
   Heading,
   Table,
   Tbody,
@@ -11,11 +12,16 @@ import {
 } from '@chakra-ui/react';
 
 import { PageWrapper } from '~/Layouts/PageWrapper';
-import { Bracket } from '~/types/brackets';
+import { BracketEntry, BracketSummary } from '~/types/brackets';
 import { CategoryBadge } from '~/components/CategoryBadge';
 import { getBracketDetails } from '~/database/queries/brackets.server';
+import { getSession } from '~/sessions.server';
 
-type LoaderData = Bracket;
+type LoaderData = {
+  summary: BracketSummary;
+  entries: BracketEntry[];
+  isCreator: boolean;
+};
 
 export const meta: MetaFunction = () => {
   return {
@@ -24,8 +30,12 @@ export const meta: MetaFunction = () => {
   };
 };
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { bracketId } = params;
+
+  const session = await getSession(request.headers.get('Cookie'));
+  const userId = session.get('userId');
+  console.log(userId);
 
   if (!bracketId) {
     throw new Response('Bracket ID was empty', {
@@ -35,6 +45,10 @@ export const loader: LoaderFunction = async ({ params }) => {
 
   const { bracketSummary, summaryError, entryData, entryError } =
     await getBracketDetails(bracketId);
+
+  const isCreator = userId === bracketSummary![0].author_id;
+  console.log(bracketSummary![0].author_id);
+  console.log(isCreator);
 
   if (summaryError) {
     console.error(summaryError);
@@ -51,6 +65,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   }
 
   return {
+    isCreator,
     summary: {
       id: bracketSummary![0].id,
       name: bracketSummary![0].name,
@@ -73,7 +88,7 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 
 const BracketDetailsRoute: React.FC = () => {
-  const { summary, entries } = useLoaderData<LoaderData>();
+  const { isCreator, summary, entries } = useLoaderData<LoaderData>();
 
   return (
     <PageWrapper>
@@ -81,6 +96,11 @@ const BracketDetailsRoute: React.FC = () => {
       <Text>By: {summary.authorId}</Text>
       <CategoryBadge category={summary.category} />
       <Text>Status: {summary.status}</Text>
+      {isCreator && (
+        <Link to={`/brackets/${summary.id}/seed`}>
+          <Button colorScheme="blackAlpha">Set Seeds</Button>
+        </Link>
+      )}
 
       <Table>
         <Thead>

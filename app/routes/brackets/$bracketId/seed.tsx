@@ -1,17 +1,41 @@
-import { Heading, Select, Button, VStack } from '@chakra-ui/react';
+import { Heading, Select, Button, VStack, Flex } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
-import { LoaderFunction, MetaFunction, useLoaderData, Form } from 'remix';
+import {
+  LoaderFunction,
+  MetaFunction,
+  useLoaderData,
+  Form,
+  ActionFunction,
+  redirect,
+  useTransition,
+  json,
+} from 'remix';
 
 import { SeedSelect } from '~/components/SeedSelect';
+import {
+  SeedInsertData,
+  setBracketSeeds,
+} from '~/database/commands/setSeeds.server';
 import { getBracketDetails } from '~/database/queries/brackets.server';
 import { useSeedSelection } from '~/hooks/useSeedSelection';
 import { PageWrapper } from '~/Layouts/PageWrapper';
+import { commitSession, getSession, isSessionValid } from '~/sessions.server';
 import { Bracket, BracketEntry } from '~/types/brackets';
 
 type LoaderData = Bracket;
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
   const { bracketId } = params;
+
+  const session = await getSession(request.headers.get('Cookie'));
+  if (!isSessionValid(session)) {
+    session.flash('error', 'You must login to create brackets');
+    return redirect('/login', {
+      headers: {
+        'Set-Cookie': await commitSession(session),
+      },
+    });
+  }
 
   if (!bracketId) {
     throw new Response('Bracket ID was empty', {
@@ -58,6 +82,39 @@ export const loader: LoaderFunction = async ({ params }) => {
   };
 };
 
+export const action: ActionFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get('Cookie'));
+  if (!isSessionValid(session)) {
+    return json(
+      {},
+      {
+        status: 401,
+        statusText: 'Unauthorized',
+      }
+    );
+  }
+
+  const userId = session.get('userId');
+  const body = await request.formData();
+
+  const totalEntries = parseInt(body.get('total-entries')!.toString(), 10);
+  const seedData: SeedInsertData[] = [];
+
+  for (let i = 1; i <= totalEntries; ++i) {
+    const seedValue = body.get(`seed-${i}`)!.toString();
+    seedData.push({
+      seedNumber: i,
+      entryId: parseInt(seedValue, 10),
+    });
+
+    await setBracketSeeds(seedData);
+  }
+
+  console.log(body);
+
+  return {};
+};
+
 export const meta: MetaFunction = () => {
   return {
     title: 'Bracketology - Seed Bracket',
@@ -67,36 +124,45 @@ export const meta: MetaFunction = () => {
 
 const SeedBracketRoute: React.FC = () => {
   const data = useLoaderData<LoaderData>();
+  const { state: transitionState } = useTransition();
   const { selectedSeeds, unseededEntries, onSeedSelected, clearSeeds } =
     useSeedSelection(data.entries);
 
-  useEffect(() => {
-    console.log('Selected seeds', selectedSeeds);
-    console.log('Unselected entries', unseededEntries);
-  }, [selectedSeeds, unseededEntries]);
-
   return (
     <PageWrapper>
-      <VStack width="100%" spacing="2">
-        <Heading as="h1">Set Bracket Seeds</Heading>
-        <Button colorScheme="red" onClick={clearSeeds}>
-          Clear Seeds
-        </Button>
-        <Form method="post">
-          {Object.keys(selectedSeeds).map((seed) => {
-            const seedNumber = parseInt(seed, 10);
-            return (
-              <SeedSelect
-                key={`seed-${seedNumber}`}
-                seedNumber={seedNumber}
-                availableEntries={unseededEntries}
-                onSelect={onSeedSelected}
-                selectedValue={selectedSeeds[seedNumber]}
-              />
-            );
-          })}
-        </Form>
-      </VStack>
+      <Heading as="h1">Set Bracket Seeds</Heading>
+      <Button colorScheme="red" onClick={clearSeeds}>
+        Clear Seeds
+      </Button>
+      <Form method="post">
+        <fieldset disabled={transitionState === 'submitting'}>
+          <input
+            type="hidden"
+            name="total-entries"
+            value={data.entries.length}
+          />
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="flex-start"
+            gap="2"
+          >
+            {Object.keys(selectedSeeds).map((seed) => {
+              const seedNumber = parseInt(seed, 10);
+              return (
+                <SeedSelect
+                  key={`seed-${seedNumber}-selected-${selectedSeeds[seedNumber]}`}
+                  seedNumber={seedNumber}
+                  availableEntries={unseededEntries}
+                  onSelect={onSeedSelected}
+                  selectedValue={selectedSeeds[seedNumber]}
+                />
+              );
+            })}
+            <Button type="submit">Set Seds</Button>
+          </Flex>
+        </fieldset>
+      </Form>
     </PageWrapper>
   );
 };

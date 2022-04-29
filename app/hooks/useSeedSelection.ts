@@ -47,7 +47,6 @@ export const useSeedSelection = (entries: BracketEntry[]) => {
   };
 
   const clearSeeds = () => {
-    console.log('clearing seeds');
     setUnseededEntries(
       entries.reduce((acc, cur) => {
         acc[cur.entryId] = cur;

@@ -18,7 +18,6 @@ export const SeedSelect: React.FC<SeedSelectProps> = ({
   selectedValue,
 }) => {
   const onSelection = (newEntry: SingleValue<BracketEntry>) => {
-    console.log(newEntry);
     onSelect(seedNumber, newEntry!.entryId);
   };
 

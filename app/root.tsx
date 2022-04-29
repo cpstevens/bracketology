@@ -52,8 +52,6 @@ const Document: React.FC = ({ children }) => {
 
 export default function App() {
   const { username, isLoggedIn } = useLoaderData<UserContextType>();
-  console.log(username);
-  console.log(isLoggedIn);
   return (
     <Document>
       <ChakraProvider theme={theme}>

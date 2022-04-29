@@ -33,7 +33,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const data = { error: session.get('error') };
-  console.log(data);
 
   return json(data, {
     headers: {
