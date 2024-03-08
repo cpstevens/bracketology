@@ -7,9 +7,6 @@ const { getSession, commitSession, destroySession } =
     // a Cookie from `createCookie` or the CookieOptions to create one
     cookie: {
       name: '__session',
-
-      // all of these are optional
-      expires: new Date(Date.now() + 60_000),
       httpOnly: true,
       path: '/',
       sameSite: 'lax',
