@@ -48,7 +48,7 @@ const validateBracketCategory: FieldValidationFunction<string> = (
     return { value: '', error: 'Bracket category is required' };
   }
 
-  if (parseInt(category!, 10) === NaN) {
+  if (Number.isNaN(parseInt(category!, 10))) {
     return { value: category!, error: 'Bracket category must be a number' };
   }
 

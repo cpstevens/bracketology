@@ -1,4 +1,4 @@
-import { Link } from 'remix';
+import { Link } from '@remix-run/react';
 import {
   Flex,
   Heading,
@@ -23,7 +23,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 }) => {
   return (
     <Flex
-      backgroundColor="InfoBackground"
+      backgroundColor="cyan"
       paddingX="8"
       paddingY="4"
       boxShadow="md"
