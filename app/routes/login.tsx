@@ -1,12 +1,5 @@
-import {
-  Form,
-  json,
-  Link,
-  redirect,
-  useLoaderData,
-  useTransition,
-} from 'remix';
-import type { ActionFunction, MetaFunction, LoaderFunction } from 'remix';
+
+import { type ActionFunctionArgs, type MetaFunction, type LoaderFunctionArgs, json, redirect } from '@remix-run/node';
 import {
   VStack,
   Heading,
@@ -24,8 +17,9 @@ import { PageWrapper } from '~/Layouts/PageWrapper';
 import { LoginRequest } from '~/types/auth';
 import { supabaseClient } from '~/database/util/supabaseClient.server';
 import { getSession, commitSession } from '~/sessions.server';
+import { useLoaderData, Form, useNavigation, Link } from '@remix-run/react';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await getSession(request.headers.get('Cookie'));
 
   if (session.has('access_token')) {
@@ -34,14 +28,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const data = { error: session.get('error') };
 
-  return json(data, {
+  return json<{ error: string | undefined }>(data, {
     headers: {
       'Set-Cookie': await commitSession(session),
     },
   });
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const session = await getSession(request.headers.get('Cookie'));
   const body = await request.formData();
   const { email, password } = Object.fromEntries(body) as LoginRequest;
@@ -89,15 +83,15 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export const meta: MetaFunction = () => {
-  return {
+  return [{
     title: 'Bracketology - Login',
     description: 'Login to Bracektology',
-  };
+  }];
 };
 
 const LoginRoute = () => {
-  const transition = useTransition();
-  const { error } = useLoaderData();
+  const transition = useNavigation();
+  const { error } = useLoaderData<typeof loader>();
   const isSubmitting = transition.state === 'submitting';
 
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack, Heading } from '@chakra-ui/react';
-import { Link } from 'remix';
+import { Link } from '@remix-run/react';
 
 import { routes } from '~/components/Navigation/routes';
 import { NavRow } from './NavRow';
@@ -13,7 +13,7 @@ export const SideBar: React.FC<SideBarProps> = ({ onNavigation }) => {
   return (
     <Stack
       spacing="8"
-      backgroundColor="InfoBackground"
+      backgroundColor="cyan"
       height="100%"
       padding="8"
     >

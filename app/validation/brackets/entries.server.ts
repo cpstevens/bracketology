@@ -70,7 +70,7 @@ const validateEntryCount: FieldValidationFunction<number> = (
 
   const numericCount = parseInt(entryCount!, 10);
 
-  if (numericCount === NaN) {
+  if (Number.isNaN(numericCount)) {
     return { value: 0, error: 'Entry count must be a number' };
   }
 

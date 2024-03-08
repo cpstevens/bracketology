@@ -1,11 +1,5 @@
-import {
-  ActionFunction,
-  MetaFunction,
-  Form,
-  Link,
-  useTransition,
-  useActionData,
-} from 'remix';
+import { Form, Link, useActionData } from '@remix-run/react';
+import type { MetaFunction } from '@remix-run/node';
 import {
   Button,
   Divider,
@@ -25,6 +19,8 @@ import {
 import { PageWrapper } from '~/Layouts/PageWrapper';
 import { SignUpRequest } from '~/types/auth';
 import { supabaseClient } from '~/database/util/supabaseClient.server';
+import { ActionFunctionArgs, json } from '@remix-run/node';
+import { useNavigation } from '@remix-run/react';
 
 type RegisterActionData = {
   values: SignUpRequest;
@@ -34,10 +30,10 @@ type RegisterActionData = {
 };
 
 export const meta: MetaFunction = () => {
-  return {
+  return [{
     title: 'Bracketology - Sign Up',
     description: 'Bracketology Account creation page',
-  };
+  }];
 };
 
 const validateRequiredFields = (fields: SignUpRequest): RegisterActionData => {
@@ -73,7 +69,7 @@ const validateRequiredFields = (fields: SignUpRequest): RegisterActionData => {
   return returnData;
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const body = await request.formData();
   const values = Object.fromEntries(body) as SignUpRequest;
 
@@ -103,12 +99,12 @@ export const action: ActionFunction = async ({ request }) => {
   } catch (error) {
     console.error('Error registering user', error);
   }
-  return actionData;
+  return json<RegisterActionData>(actionData);
 };
 
 const RegisterRoute = () => {
-  const transition = useTransition();
-  const actionData = useActionData<RegisterActionData>();
+  const transition = useNavigation();
+  const actionData = useActionData<typeof action>();
   const hasRegistrationError = !!actionData?.registrationError;
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Heading, Text, Box, VStack } from '@chakra-ui/react';
 import { CategoryBadge } from '../CategoryBadge';
-import { Link } from 'remix';
+import { Link } from '@remix-run/react';
 
 export interface SummaryCardProps {
   id: string;

@@ -1,21 +1,15 @@
-import React from 'react';
-import { MetaFunction, LoaderFunction, useLoaderData } from 'remix';
-import {
-  Links,
-  LiveReload,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from 'remix';
-import { ChakraProvider } from '@chakra-ui/provider';
+import { ReactNode } from 'react';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from '@remix-run/react';
 
-import { theme } from './styles/theme';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+
+import { ChakraProvider, extendBaseTheme } from '@chakra-ui/react';
+
 import { Navigation } from '~/components/Navigation';
 import { getSession } from '~/sessions.server';
 import { UserContextType } from './types/auth';
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await getSession(request.headers.get('Cookie'));
   const username = session.get('username');
   const isLoggedIn = session.has('accessToken');
@@ -28,10 +22,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const meta: MetaFunction = () => {
-  return { title: 'Bracketology' };
+  return [{ title: 'Bracketology' }];
 };
 
-const Document: React.FC = ({ children }) => {
+type DocumentProps = {
+  children: ReactNode;
+}
+
+const Document = ({ children }: DocumentProps) => {
   return (
     <html lang="en">
       <head>
@@ -54,7 +52,7 @@ export default function App() {
   const { username, isLoggedIn } = useLoaderData<UserContextType>();
   return (
     <Document>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider>
         <Navigation username={username} isLoggedIn={isLoggedIn} />
         <Outlet />
       </ChakraProvider>
