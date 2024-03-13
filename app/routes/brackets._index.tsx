@@ -1,4 +1,4 @@
-import { Link, isRouteErrorResponse, useLoaderData, useRouteError } from '@remix-run/react';
+import { Link, isRouteErrorResponse, json, useLoaderData, useRouteError } from '@remix-run/react';
 import type { LoaderFunction } from '@remix-run/node';
 import {
   Button,
@@ -7,8 +7,9 @@ import {
   Heading,
   Spacer,
   Text,
-  Wrap,
-  WrapItem,
+  VStack,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 import { FaPencilAlt } from 'react-icons/fa';
 
@@ -20,12 +21,11 @@ type LoaderData = {
   brackets: BracketSummary[];
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader = async () => {
   const { data, error } = await supabaseClient.from('summaries').select(`
     id,
     name,
     description,
-    author_id,
     created_at,
     category: category ( name ),
     status: status (name)
@@ -38,7 +38,7 @@ export const loader: LoaderFunction = async () => {
     });
   }
 
-  return {
+  return json<LoaderData>({
     brackets: data?.map((entry: { id: any; name: any; description: any; author_id: any; category: { name: any; }; status: { name: any; }; created_at: any; }) => {
       const bracket: BracketSummary = {
         id: entry.id,
@@ -51,7 +51,7 @@ export const loader: LoaderFunction = async () => {
       };
       return bracket;
     }),
-  };
+  });
 };
 
 export const ErrorBoundary = () => {
@@ -70,10 +70,10 @@ export const ErrorBoundary = () => {
 };
 
 const BracketsIndexRoute = () => {
-  const { brackets } = useLoaderData<LoaderData>();
+  const { brackets } = useLoaderData<typeof loader>();
   return (
-    <>
-      <Flex>
+    <VStack gap="4" align="start">
+      <Flex flexDirection="row" justifyContent="space-between" width="100%">
         <Heading as="h1">Brackets</Heading>
         <Spacer />
         <Link to="/brackets/create">
@@ -83,22 +83,21 @@ const BracketsIndexRoute = () => {
         </Link>
       </Flex>
 
-      <Wrap>
-        {brackets.map(({ id, name, authorId, description, category }) => {
+      <Grid templateColumns={['repeat(1, 1fr)', 'repeat(2, 1fr)', 'repeat(3, 1fr)', 'repeat(4, 1fr)']} gap={6}>
+        {brackets.map(({ id, name, description, category }) => {
           return (
-            <WrapItem key={id}>
+            <GridItem key={id}>
               <SummaryCard
                 id={id}
                 name={name}
-                author={authorId}
                 category={category}
                 description={description}
               />
-            </WrapItem>
+            </GridItem>
           );
         })}
-      </Wrap>
-    </>
+      </Grid>
+    </VStack>
   );
 };
 

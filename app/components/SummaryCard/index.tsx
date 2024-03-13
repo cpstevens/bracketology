@@ -6,7 +6,6 @@ import { Link } from '@remix-run/react';
 export interface SummaryCardProps {
   id: string;
   name: string;
-  author: string;
   category: string;
   description: string;
 }
@@ -14,7 +13,6 @@ export interface SummaryCardProps {
 export const SummaryCard: React.FC<SummaryCardProps> = ({
   id,
   name,
-  author,
   category,
   description,
 }) => {
@@ -29,11 +27,10 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
       >
         <VStack spacing="2">
           <Link to={`/brackets/${id}`}>
-            <Heading size="lg" as="h2">
+            <Heading textAlign="center" size="lg" as="h2">
               {name}
             </Heading>
           </Link>
-          <Text>{author}</Text>
           <CategoryBadge category={category} />
           <Text>{description}</Text>
         </VStack>

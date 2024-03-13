@@ -173,11 +173,11 @@ const CreateBracketRoute = () => {
 
   return (
     <PageWrapper>
-      <Container>
-        <VStack spacing="4" width="100%">
-          <Heading as="h1">Create New Bracket</Heading>
-          <Form method="post">
-            <VStack spacing="4" width="100%">
+      <VStack spacing="4" width="100%">
+        <Heading as="h1">Create New Bracket</Heading>
+        <Form method="post">
+          <VStack spacing="4" width="100%">
+            <Stack direction={['column', 'row']} spacing="4">
               <VStack spacing="4" width="100%">
                 <Heading as="h2">Summary</Heading>
                 <FormLabel width="100%">
@@ -215,24 +215,20 @@ const CreateBracketRoute = () => {
                     placeholder="Category"
                     name="category"
                   >
-                    {(categoryFetcher.state === 'idle' && categoryFetcher.data != null) ? (
-                      categoryFetcher.data?.categories.map((category) => {
-                        return (
-                          <option
-                            key={`bracket-category=${category.id}`}
-                            value={category.id}
-                          >
-                            {category.name}
-                          </option>
-                        );
-                      })
-                    ) : (
-                      <Spinner />
-                    )}
+                    {categoryFetcher.data?.categories.map((category) => {
+                      return (
+                        <option
+                          key={`bracket-category=${category.id}`}
+                          value={category.id}
+                        >
+                          {category.name}
+                        </option>
+                      );
+                    })}
+
                   </Select>
                 </FormLabel>
               </VStack>
-              <Divider />
               <VStack spacing="4" width="100%">
                 <Heading as="h2">Entry Details</Heading>
                 <RadioGroup
@@ -248,7 +244,7 @@ const CreateBracketRoute = () => {
                 </RadioGroup>
                 {entries.map((entry, index) => {
                   return (
-                    <FormLabel>
+                    <FormLabel key={`entry-${index}`}>
                       <Box>
                         Entry {index}
                         {actionData?.errors?.entries.entryErrors[index] && (
@@ -258,7 +254,6 @@ const CreateBracketRoute = () => {
                         )}
                       </Box>
                       <Input
-                        key={`entry-${index}`}
                         placeholder={`Entry Name`}
                         name={`entry-${index}`}
                         required
@@ -267,17 +262,17 @@ const CreateBracketRoute = () => {
                   );
                 })}
               </VStack>
-              <Button
-                leftIcon={<FaPlusCircle />}
-                type="submit"
-                colorScheme="blackAlpha"
-              >
-                Submit
-              </Button>
-            </VStack>
-          </Form>
-        </VStack>
-      </Container>
+            </Stack>
+            <Button
+              leftIcon={<FaPlusCircle />}
+              type="submit"
+              colorScheme="blackAlpha"
+            >
+              Submit
+            </Button>
+          </VStack>
+        </Form>
+      </VStack>
     </PageWrapper>
   );
 };

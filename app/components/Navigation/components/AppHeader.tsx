@@ -7,6 +7,7 @@ import {
   Spacer,
   HStack,
   Text,
+  Box,
 } from '@chakra-ui/react';
 import { FaList } from 'react-icons/fa';
 
@@ -36,9 +37,12 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         mr="4"
         icon={<FaList />}
       />
-      <Link to="/">
-        <Heading size="xl">Bracketology</Heading>
-      </Link>
+      <Box hideBelow="sm">
+        <Link to="/">
+          <Heading size="xl">Bracketology</Heading>
+        </Link>
+      </Box>
+
       <Spacer />
 
       {isLoggedIn ? (
