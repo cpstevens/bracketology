@@ -177,7 +177,7 @@ const CreateBracketRoute = () => {
         <Heading as="h1">Create New Bracket</Heading>
         <Form method="post">
           <VStack spacing="4" width="100%">
-            <Stack direction={['column', 'row']} spacing="4">
+            <Stack direction={['column', 'row']} gap="16">
               <VStack spacing="4" width="100%">
                 <Heading as="h2">Summary</Heading>
                 <FormLabel width="100%">
@@ -230,7 +230,7 @@ const CreateBracketRoute = () => {
                 </FormLabel>
               </VStack>
               <VStack spacing="4" width="100%">
-                <Heading as="h2">Entry Details</Heading>
+                <Heading as="h2">Entries</Heading>
                 <RadioGroup
                   value={totalEntries}
                   onChange={setTotalEntries}
@@ -267,6 +267,7 @@ const CreateBracketRoute = () => {
               leftIcon={<FaPlusCircle />}
               type="submit"
               colorScheme="blackAlpha"
+              width="100%"
             >
               Submit
             </Button>
